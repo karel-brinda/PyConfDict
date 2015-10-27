@@ -14,14 +14,14 @@ class PyConfDict(collections.OrderedDict):
 	def update(self,conf_dict,allow_new_keys=False):
 		"""Update dictionary from another dictionary.
 		"""
-		old_keys=self.keys()
+		old_keys=set(self.keys())
 		super(self.__class__, self).update(conf_dict)
-		new_keys=self.keys()
+		new_keys=set(self.keys())
+		keys_diff=new_keys-old_keys
 		if not allow_new_keys:
-			if old_keys!=new_keys:
-				raise ValueError("Adding new keys during update ({})".format(
-						", ".join(new_keys-old_keys))
-					)
+			if keys_diff!=set():
+				exception_message="Adding new keys during update: {}".format(", ".join(keys_diff))
+				raise ValueError(exception_message)
 
 	def update_from_json(self,json_fn,allow_new_keys=False):
 		"""Update from a JSON file.
@@ -35,7 +35,7 @@ class PyConfDict(collections.OrderedDict):
 		"""
 
 		new_pcd=PyConfDict(conf_dict)
-		new_pcd.update(self)
+		new_pcd.update(self,allow_new_keys=True)
 		for key in new_pcd.keys():
 			self[key]=new_pcd[key]
 	
