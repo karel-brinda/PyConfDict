@@ -1,6 +1,7 @@
 from __future__ import print_function, division
 import collections
 import json
+import copy
 
 class PyConfDict(collections.OrderedDict):
 
@@ -15,7 +16,9 @@ class PyConfDict(collections.OrderedDict):
 		"""Update dictionary from another dictionary.
 		"""
 		old_keys=set(self.keys())
-		super(self.__class__, self).update(conf_dict)
+		#super(self.__class__, self).update(conf_dict)
+		for key in conf_dict.keys():
+			self[key]=copy.deepcopy(conf_dict[key])
 		new_keys=set(self.keys())
 		keys_diff=new_keys-old_keys
 		if not allow_new_keys:
@@ -33,11 +36,10 @@ class PyConfDict(collections.OrderedDict):
 	def fill_missing(self,conf_dict):
 		"""Add (key,value) for missing keys.
 		"""
-
-		new_pcd=PyConfDict(conf_dict)
-		new_pcd.update(self,allow_new_keys=True)
-		for key in new_pcd.keys():
-			self[key]=new_pcd[key]
+		self_keys=self.keys()
+		for key in conf_dict.keys():
+			if key not in self_keys:
+				self[key]=conf_dict[key]
 	
 	def fill_missing_from_json(self,json_fn):
 		"""Fill missing values from a JSON file.
