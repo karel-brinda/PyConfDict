@@ -3,7 +3,7 @@ os:
 - linux
 python:
 #- '2.6'
-- '2.7'
+#- '2.7'
 - '3.2'
 - '3.3'
 - '3.4'
@@ -18,4 +18,4 @@ before_install:
 install:
 - pip install .
 script:
-# test - cd tests && bats ${CI:+--tap} ./tests_run.sh
+- ./tests/tests.py
